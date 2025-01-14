@@ -1,10 +1,13 @@
-
-
 export default function Hero() {
   return (
-    <section className="bg-gray-800 text-white py-32">
+    <section className="bg-gray-800 text-white py-32 px-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">Rijan Thapa</h1>
+        <h1
+          className="text-4xl md:text-6xl font-bold mb-4"
+          data-aos="fade-right"
+        >
+          Rijan Thapa
+        </h1>
         <h2 className="text-2xl md:text-3xl mb-8">Frontend Developer</h2>
         <p className="text-xl mb-8 max-w-2xl">
           Passionate about creating responsive and user-friendly web
