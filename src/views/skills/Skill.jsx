@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 const Skill = () => {
   const skills = [
     "React",
     "Next.js",
     "JavaScript",
-    "Typescript",
+    "TypeScript",
     "HTML",
     "CSS",
     "Tailwind CSS",
@@ -14,33 +15,62 @@ const Skill = () => {
     "Redux",
     "React Native",
     "Zustand",
-    "Redux",
     "React Query",
-    "Node js",
+    "Node.js",
     "Express",
-    "NEST",
+    "NestJS",
   ];
 
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: -100 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
-    <>
-      <section className="bg-gray-900 py-10 px-8">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-white">Skill</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {skills.map((skill, index) => (
-              <div
-                key={index}
-                className="bg-gray-800 text-white rounded-lg p-4 shadow transform transition-all duration-500 ease-in-out hover:scale-105 animate__animated animate__fadeIn animate__delay-1s"
-                style={{ animationDelay: `${index * 0.1}s` }}
-                data-aos="fade-down"
-              >
-                {skill}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
+    <section className="bg-gray-950 py-16 px-6">
+      <div className="container mx-auto max-w-6xl">
+        <h2 className="text-4xl font-extrabold text-white mb-12 text-center">
+          My Skills
+        </h2>
+
+        <motion.div
+          ref={containerRef}
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
+          {skills.map((skill, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className="bg-gray-800 text-white text-center rounded-xl p-5 font-medium shadow-lg hover:shadow-2xl transition-all hover:scale-105"
+            >
+              {skill}
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
   );
 };
 
