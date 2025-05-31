@@ -1,65 +1,107 @@
+import { FaGithub, FaLinkedin, FaMedium, FaEnvelope } from "react-icons/fa";
+import { motion } from "framer-motion";
+
+const iconVariants = {
+  hidden: { y: -60, opacity: 0 },
+  visible: (i) => ({
+    y: 0,
+    opacity: 1,
+    transition: {
+      delay: 0.3 + i * 0.2,
+      type: "spring",
+      stiffness: 120,
+    },
+  }),
+};
+
 export default function Hero() {
   return (
-    <section className="bg-gray-800 text-white py-20 px-8 overflow-hidden">
+    <section className="bg-gray-900 text-white py-20 px-8 overflow-hidden">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
-        <div className="md:w-1/2 mb-12 md:mb-0">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fadeInLeft">
+        {/* Left Content */}
+        <motion.div
+          className="md:w-1/2 mb-12 md:mb-0"
+          initial={{ opacity: 0, x: -60 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
             Rijan Thapa
           </h1>
 
-          <h2 className="text-2xl md:text-3xl mb-8 text-blue-400 animate-fadeInLeft animation-delay-200">
+          <h2 className="text-2xl md:text-3xl mb-6 text-blue-400">
             Frontend Developer
           </h2>
 
-          <p className="text-xl mb-8 max-w-2xl animate-fadeInLeft animation-delay-400">
-            Passionate about creating responsive and user-friendly web
-            applications using React and modern web technologies.
+          <p className="text-lg md:text-xl mb-6 max-w-2xl">
+            I build responsive, engaging user interfaces using modern tools like
+            React, Tailwind CSS, and more. Let's build something amazing.
           </p>
 
-          <div className="flex space-x-4 mb-8 animate-fadeIn animation-delay-600">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:text-gray-300 transition-colors"
+          {/* Social + Email Icons */}
+          <div className="flex flex-wrap items-center gap-6 text-2xl mb-8">
+            {[FaGithub, FaMedium, FaLinkedin].map((Icon, i) => (
+              <motion.a
+                key={i}
+                href={
+                  i === 0
+                    ? "https://github.com/rijanThapa"
+                    : i === 1
+                    ? "https://medium.com/@rijan4568"
+                    : "https://www.linkedin.com/in/rijan-thapa-136a84315/"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={iconVariants}
+                className="hover:text-blue-400 transition-colors"
+              >
+                <Icon />
+              </motion.a>
+            ))}
+
+            {/* Email (With Icon + Text) */}
+            <motion.a
+              href="mailto:rijan4568@gmail.com"
+              className="flex items-center space-x-2 hover:text-blue-400 transition-colors text-base"
+              custom={3}
+              initial="hidden"
+              animate="visible"
+              variants={iconVariants}
             >
-              {/* <GitHub size={24} /> */}
-              [GitHub]
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:text-gray-300 transition-colors"
-            >
-              {/* <Linkedin size={24} /> */}
-              [LinkedIn]
-            </a>
-            <a
-              href="mailto:john@example.com"
-              className="text-white hover:text-gray-300 transition-colors"
-            >
-              {/* <Mail size={24} /> */}
-              [Email]
-            </a>
+              <FaEnvelope className="text-2xl" />
+              <span className="hidden sm:inline">rijan4568@gmail.com</span>
+            </motion.a>
           </div>
 
-          <a
+          {/* CTA */}
+          <motion.a
             href="#contact"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300 animate-fadeIn animation-delay-800"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             Get in Touch
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
 
-        <div className="md:w-1/2 flex justify-center animate-fadeInRight animation-delay-400">
-          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-blue-500">
-            {/* Replace with your actual image */}
-            <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-              <img src="https://scontent.fktm7-1.fna.fbcdn.net/v/t1.6435-9/52905713_406693316757282_6874493330781110272_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeHK1R-LW3jAwt5WfSi_JJiFPsEV64if3b8-wRXriJ_dvztXXisM_Kzi3gD0kHeuV0ZJMTx7j9v3I4mq4vQOLxbS&_nc_ohc=HDLUi-wr1aAQ7kNvwGNMIic&_nc_oc=Admf9NPVHqlfE9EuWFVI16Wd4oyRk1O2wAvb8bf7ELb0fdKBp9iXQYtGYbffPmodeSZVRq9ffzn-WH8oh2c07YdJ&_nc_zt=23&_nc_ht=scontent.fktm7-1.fna&_nc_gid=q5g-LRzS3jswMgZwvcCBfg&oh=00_AfLNSRo9ufaQ5hyMMKnY0AU8OFm5Zo2x6Bli7p8lKDc5Vw&oe=68445BCC" />
-            </div>
+        {/* Right Side Image */}
+        <motion.div
+          className="md:w-1/2 flex justify-center"
+          initial={{ opacity: 0, x: 80 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-blue-500 shadow-lg shadow-blue-500/50">
+            <img
+              src="https://avatars.githubusercontent.com/u/62012463?v=4"
+              alt="Rijan Thapa"
+              className="w-full h-full object-cover"
+            />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
