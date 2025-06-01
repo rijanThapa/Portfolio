@@ -19,6 +19,7 @@ const Skill = () => {
     "Node.js",
     "Express",
     "NestJS",
+    "Ruby on Rails"
   ];
 
   const containerRef = useRef(null);
