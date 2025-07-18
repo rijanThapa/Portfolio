@@ -10,7 +10,7 @@ const LandaningPage = () => {
       <Hero />
       <About />
       <Skills />
-      <Contact/>
+      <Contact />
     </>
   );
 };
