@@ -45,7 +45,9 @@ const LiquidThreeBackground = () => {
     const liquidMaterial = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        resolution: {
+          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+        },
         mouse: { value: new THREE.Vector2(0.5, 0.5) },
         colorA: { value: new THREE.Color(0x1e40af) }, // Deep Blue
         colorB: { value: new THREE.Color(0x7c3aed) }, // Rich Purple
@@ -247,38 +249,38 @@ const LiquidThreeBackground = () => {
       createLiquidDrop(4.2, new THREE.Vector3(12, -6, -10), 0.28),
       createLiquidDrop(3.8, new THREE.Vector3(-8, -10, -15), 0.22),
       createLiquidDrop(4.1, new THREE.Vector3(18, 5, -14), 0.26),
-      
+
       // Medium central drops
       createLiquidDrop(3.2, new THREE.Vector3(-5, 3, -5), 0.4),
       createLiquidDrop(3.0, new THREE.Vector3(8, -2, -6), 0.38),
       createLiquidDrop(2.8, new THREE.Vector3(-12, 0, -8), 0.35),
       createLiquidDrop(3.1, new THREE.Vector3(5, 8, -7), 0.37),
       createLiquidDrop(2.9, new THREE.Vector3(-2, -7, -9), 0.36),
-      
+
       // Screen edge drops for full coverage
       createLiquidDrop(3.5, new THREE.Vector3(-20, 12, -18), 0.2),
       createLiquidDrop(3.3, new THREE.Vector3(22, -8, -16), 0.22),
       createLiquidDrop(3.7, new THREE.Vector3(-18, -12, -20), 0.18),
       createLiquidDrop(3.4, new THREE.Vector3(20, 10, -17), 0.21),
-      
+
       // Corner drops
       createLiquidDrop(2.5, new THREE.Vector3(-25, 15, -25), 0.15),
       createLiquidDrop(2.7, new THREE.Vector3(25, -15, -22), 0.17),
       createLiquidDrop(2.4, new THREE.Vector3(-22, -18, -28), 0.14),
       createLiquidDrop(2.6, new THREE.Vector3(24, 18, -24), 0.16),
-      
+
       // Additional depth layers
       createLiquidDrop(2.2, new THREE.Vector3(-10, 6, -12), 0.32),
       createLiquidDrop(2.4, new THREE.Vector3(6, -4, -11), 0.34),
       createLiquidDrop(2.1, new THREE.Vector3(-6, -8, -13), 0.3),
       createLiquidDrop(2.3, new THREE.Vector3(11, 4, -10), 0.33),
-      
+
       // Foreground accent drops
       createLiquidDrop(1.8, new THREE.Vector3(-3, 5, -3), 0.5),
       createLiquidDrop(1.9, new THREE.Vector3(4, -3, -2), 0.52),
       createLiquidDrop(1.7, new THREE.Vector3(-7, -1, -4), 0.48),
       createLiquidDrop(1.6, new THREE.Vector3(2, 7, -3), 0.46),
-      
+
       // Small ambient drops
       createLiquidDrop(1.2, new THREE.Vector3(-15, 4, -18), 0.25),
       createLiquidDrop(1.4, new THREE.Vector3(14, -9, -19), 0.27),
@@ -288,7 +290,7 @@ const LiquidThreeBackground = () => {
       createLiquidDrop(1.0, new THREE.Vector3(10, -12, -23), 0.22),
     ];
 
-    drops.forEach(drop => scene.add(drop));
+    drops.forEach((drop) => scene.add(drop));
 
     // Create subtle professional particles covering full screen
     const createFloatingParticles = () => {
@@ -319,13 +321,16 @@ const LiquidThreeBackground = () => {
         } else {
           colors[i3] = 0.03; // Professional Cyan
           colors[i3 + 1] = 0.57;
-          colors[i3 + 2] = 0.70;
+          colors[i3 + 2] = 0.7;
         }
 
         sizes[i] = Math.random() * 1.5 + 0.3;
       }
 
-      particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      particles.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
       particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
       particles.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
 
@@ -391,7 +396,7 @@ const LiquidThreeBackground = () => {
     // Mouse interaction with smooth movement
     const handleMouseMove = (event) => {
       targetMouse.x = event.clientX / window.innerWidth;
-      targetMouse.y = 1.0 - (event.clientY / window.innerHeight);
+      targetMouse.y = 1.0 - event.clientY / window.innerHeight;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -413,36 +418,45 @@ const LiquidThreeBackground = () => {
       drops.forEach((drop, index) => {
         drop.material.uniforms.time.value = time;
         drop.material.uniforms.mouse.value.copy(smoothMouse);
-        
+
         // Mouse-responsive movement with magnetic effect
         const dropX = drop.position.x;
         const dropY = drop.position.y;
         const distanceFromMouse = Math.sqrt(
-          Math.pow(dropX - mouseInfluenceX, 2) + 
-          Math.pow(dropY - mouseInfluenceY, 2)
+          Math.pow(dropX - mouseInfluenceX, 2) +
+            Math.pow(dropY - mouseInfluenceY, 2)
         );
         const mouseEffect = Math.max(0, 1 - distanceFromMouse / 20);
-        
+
         // Magnetic attraction to mouse
         const attractionForce = mouseEffect * 0.02;
         const directionToMouse = {
           x: (mouseInfluenceX - dropX) * attractionForce,
-          y: (mouseInfluenceY - dropY) * attractionForce
+          y: (mouseInfluenceY - dropY) * attractionForce,
         };
-        
+
         // Apply mouse influence to drop positions with smooth animation
-        drop.position.x += Math.sin(mouseInfluenceX * 0.1 + index) * mouseEffect * 0.3 + directionToMouse.x;
-        drop.position.y += Math.cos(mouseInfluenceY * 0.1 + index) * mouseEffect * 0.2 + directionToMouse.y;
-        
+        drop.position.x +=
+          Math.sin(mouseInfluenceX * 0.1 + index) * mouseEffect * 0.3 +
+          directionToMouse.x;
+        drop.position.y +=
+          Math.cos(mouseInfluenceY * 0.1 + index) * mouseEffect * 0.2 +
+          directionToMouse.y;
+
         // Enhanced rotation with mouse influence
-        drop.rotation.x += 0.001 * (index % 2 === 0 ? 1 : -1) + mouseEffect * 0.003;
-        drop.rotation.y += 0.0015 * (index % 3 === 0 ? 1 : -1) + mouseEffect * 0.004;
-        drop.rotation.z += 0.0005 * (index % 4 === 0 ? 1 : -1) + mouseEffect * 0.002;
-        
+        drop.rotation.x +=
+          0.001 * (index % 2 === 0 ? 1 : -1) + mouseEffect * 0.003;
+        drop.rotation.y +=
+          0.0015 * (index % 3 === 0 ? 1 : -1) + mouseEffect * 0.004;
+        drop.rotation.z +=
+          0.0005 * (index % 4 === 0 ? 1 : -1) + mouseEffect * 0.002;
+
         // Professional floating motion with enhanced mouse influence
-        drop.position.y += Math.sin(time * 0.3 + index * 1.5) * 0.008 + mouseEffect * 0.015;
-        drop.position.x += Math.cos(time * 0.2 + index * 1.2) * 0.005 + mouseEffect * 0.012;
-        
+        drop.position.y +=
+          Math.sin(time * 0.3 + index * 1.5) * 0.008 + mouseEffect * 0.015;
+        drop.position.x +=
+          Math.cos(time * 0.2 + index * 1.2) * 0.005 + mouseEffect * 0.012;
+
         // Scale effect based on mouse proximity
         const baseScale = 1.0 + mouseEffect * 0.2;
         drop.scale.setScalar(baseScale);
@@ -450,21 +464,23 @@ const LiquidThreeBackground = () => {
 
       // Update particle system with mouse interaction
       floatingParticles.material.uniforms.time.value = time;
-      
+
       // Mouse-responsive particle movement
       const positions = floatingParticles.geometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
         const x = positions[i];
         const y = positions[i + 1];
         const distanceFromMouse = Math.sqrt(
-          Math.pow(x - mouseInfluenceX * 2, 2) + 
-          Math.pow(y - mouseInfluenceY * 2, 2)
+          Math.pow(x - mouseInfluenceX * 2, 2) +
+            Math.pow(y - mouseInfluenceY * 2, 2)
         );
         const mouseEffect = Math.max(0, 1 - distanceFromMouse / 20);
-        
+
         // Apply subtle mouse influence to particles
-        positions[i] += Math.sin(mouseInfluenceX * 0.05 + i) * mouseEffect * 0.1;
-        positions[i + 1] += Math.cos(mouseInfluenceY * 0.05 + i) * mouseEffect * 0.08;
+        positions[i] +=
+          Math.sin(mouseInfluenceX * 0.05 + i) * mouseEffect * 0.1;
+        positions[i + 1] +=
+          Math.cos(mouseInfluenceY * 0.05 + i) * mouseEffect * 0.08;
       }
       floatingParticles.geometry.attributes.position.needsUpdate = true;
 
@@ -485,10 +501,13 @@ const LiquidThreeBackground = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      
+
       // Update material resolution
-      drops.forEach(drop => {
-        drop.material.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+      drops.forEach((drop) => {
+        drop.material.uniforms.resolution.value.set(
+          window.innerWidth,
+          window.innerHeight
+        );
       });
     };
 
