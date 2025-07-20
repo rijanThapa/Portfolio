@@ -41,141 +41,57 @@ const LiquidThreeBackground = () => {
 
     currentMount.appendChild(renderer.domElement);
 
-    // Professional Liquid Drop Shader Material
-    const liquidMaterial = new THREE.ShaderMaterial({
+    // Realistic Water Drop Shader Material
+    const waterDropMaterial = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
         resolution: {
           value: new THREE.Vector2(window.innerWidth, window.innerHeight),
         },
         mouse: { value: new THREE.Vector2(0.5, 0.5) },
-        colorA: { value: new THREE.Color(0x1e40af) }, // Deep Blue
-        colorB: { value: new THREE.Color(0x7c3aed) }, // Rich Purple
-        colorC: { value: new THREE.Color(0x0891b2) }, // Professional Cyan
-        amplitude: { value: 1.2 },
-        frequency: { value: 1.2 },
-        opacity: { value: 0.4 },
+        colorA: { value: new THREE.Color(0x1e3a8a) }, // Deep Water Blue
+        colorB: { value: new THREE.Color(0x3b82f6) }, // Bright Blue
+        colorC: { value: new THREE.Color(0x93c5fd) }, // Light Blue
+        refractionStrength: { value: 1.5 },
+        opacity: { value: 0.7 },
       },
       vertexShader: `
         uniform float time;
-        uniform float amplitude;
-        uniform float frequency;
         uniform vec2 mouse;
         
         varying vec3 vPosition;
         varying vec3 vNormal;
         varying vec2 vUv;
-        varying float vDisplacement;
+        varying float vWaterEffect;
+        varying vec3 vWorldPosition;
         
-        // Simplex noise function
-        vec3 mod289(vec3 x) {
-          return x - floor(x * (1.0 / 289.0)) * 289.0;
-        }
-        
-        vec4 mod289(vec4 x) {
-          return x - floor(x * (1.0 / 289.0)) * 289.0;
-        }
-        
-        vec4 permute(vec4 x) {
-          return mod289(((x*34.0)+1.0)*x);
-        }
-        
-        vec4 taylorInvSqrt(vec4 r) {
-          return 1.79284291400159 - 0.85373472095314 * r;
-        }
-        
-        float snoise(vec3 v) {
-          const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-          const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-          
-          vec3 i = floor(v + dot(v, C.yyy));
-          vec3 x0 = v - i + dot(i, C.xxx);
-          
-          vec3 g = step(x0.yzx, x0.xyz);
-          vec3 l = 1.0 - g;
-          vec3 i1 = min(g.xyz, l.zxy);
-          vec3 i2 = max(g.xyz, l.zxy);
-          
-          vec3 x1 = x0 - i1 + C.xxx;
-          vec3 x2 = x0 - i2 + C.yyy;
-          vec3 x3 = x0 - D.yyy;
-          
-          i = mod289(i);
-          vec4 p = permute(permute(permute(
-                    i.z + vec4(0.0, i1.z, i2.z, 1.0))
-                  + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-                  + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-          
-          float n_ = 0.142857142857;
-          vec3 ns = n_ * D.wyz - D.xzx;
-          
-          vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-          
-          vec4 x_ = floor(j * ns.z);
-          vec4 y_ = floor(j - 7.0 * x_);
-          
-          vec4 x = x_ *ns.x + ns.yyyy;
-          vec4 y = y_ *ns.x + ns.yyyy;
-          vec4 h = 1.0 - abs(x) - abs(y);
-          
-          vec4 b0 = vec4(x.xy, y.xy);
-          vec4 b1 = vec4(x.zw, y.zw);
-          
-          vec4 s0 = floor(b0) * 2.0 + 1.0;
-          vec4 s1 = floor(b1) * 2.0 + 1.0;
-          vec4 sh = -step(h, vec4(0.0));
-          
-          vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
-          vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
-          
-          vec3 p0 = vec3(a0.xy, h.x);
-          vec3 p1 = vec3(a0.zw, h.y);
-          vec3 p2 = vec3(a1.xy, h.z);
-          vec3 p3 = vec3(a1.zw, h.w);
-          
-          vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-          p0 *= norm.x;
-          p1 *= norm.y;
-          p2 *= norm.z;
-          p3 *= norm.w;
-          
-          vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-          m = m * m;
-          return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+        // Water surface noise function
+        float waterNoise(vec3 p) {
+          return sin(p.x * 2.0 + time) * sin(p.y * 1.5 + time * 0.8) * sin(p.z * 1.2 + time * 0.6) * 0.3;
         }
         
         void main() {
           vUv = uv;
           vPosition = position;
-          
-          // Create smooth liquid drop deformation
-          float noise1 = snoise(position * frequency + time * 0.3);
-          float noise2 = snoise(position * frequency * 1.5 + time * 0.2) * 0.6;
-          float noise3 = snoise(position * frequency * 2.5 + time * 0.4) * 0.3;
-          
-          // Combine for organic liquid movement
-          float displacement = (noise1 + noise2 + noise3) * amplitude * 0.5;
-          
-          // Add enhanced mouse interaction for professional feel
-          vec3 mouseInfluence = vec3(mouse.x - 0.5, mouse.y - 0.5, 0.0) * 3.0;
-          float mouseDistance = length(position.xy - mouseInfluence.xy);
-          float mouseEffect = smoothstep(12.0, 0.0, mouseDistance) * 1.2;
-          displacement += mouseEffect;
-          
-          // Create dynamic mouse-responsive deformation
-          float mousePull = smoothstep(8.0, 0.0, mouseDistance) * 0.8;
-          vec3 mouseDirection = normalize(mouseInfluence - position);
-          displacement += mousePull * dot(normal, mouseDirection);
-          
-          // Create drop-like shape deformation
-          float dropEffect = 1.0 + sin(position.y * 2.0 + time * 0.5) * 0.1;
-          displacement *= dropEffect;
-          
-          // Apply displacement along normal for smooth liquid surface
-          vec3 newPosition = position + normal * displacement;
-          
-          vDisplacement = displacement;
           vNormal = normal;
+          
+          // Create water drop surface tension effect
+          float surfaceTension = waterNoise(position * 3.0) * 0.1;
+          
+          // Mouse interaction for water ripples
+          vec3 mouseInfluence = vec3(mouse.x - 0.5, mouse.y - 0.5, 0.0) * 4.0;
+          float mouseDistance = length(position.xy - mouseInfluence.xy);
+          float rippleEffect = sin(mouseDistance * 5.0 - time * 8.0) * 
+                              exp(-mouseDistance * 0.5) * 0.3;
+          
+          // Combine surface effects
+          float totalDisplacement = surfaceTension + rippleEffect;
+          
+          // Apply displacement for water drop shape
+          vec3 newPosition = position + normal * totalDisplacement;
+          
+          vWaterEffect = totalDisplacement;
+          vWorldPosition = (modelMatrix * vec4(newPosition, 1.0)).xyz;
           
           gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
         }
@@ -187,41 +103,52 @@ const LiquidThreeBackground = () => {
         uniform vec3 colorC;
         uniform vec2 mouse;
         uniform float opacity;
+        uniform float refractionStrength;
         
         varying vec3 vPosition;
         varying vec3 vNormal;
         varying vec2 vUv;
-        varying float vDisplacement;
+        varying float vWaterEffect;
+        varying vec3 vWorldPosition;
         
         void main() {
-          // Professional gradient color mixing with mouse influence
-          float colorMix1 = sin(vPosition.x * 0.3 + time * 0.4) * 0.5 + 0.5;
-          float colorMix2 = sin(vPosition.y * 0.2 + time * 0.3) * 0.5 + 0.5;
-          float colorMix3 = sin(vDisplacement * 1.5 + time * 0.5) * 0.5 + 0.5;
+          // Water drop refraction effect
+          vec3 normal = normalize(vNormal);
+          vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
           
-          // Add mouse influence to color mixing
+          // Create realistic water refraction
+          float fresnel = pow(1.0 - max(dot(normal, viewDirection), 0.0), 2.0);
+          
+          // Water color mixing based on depth and angle
+          float depth = length(vPosition) * 0.1;
+          vec3 waterColor = mix(colorA, colorB, depth);
+          waterColor = mix(waterColor, colorC, fresnel);
+          
+          // Add surface highlights like real water
+          float highlight = pow(max(dot(normal, normalize(vec3(1.0, 1.0, 1.0))), 0.0), 50.0);
+          waterColor += vec3(1.0) * highlight * 0.8;
+          
+          // Surface tension effect
+          float rim = 1.0 - abs(dot(normal, viewDirection));
+          rim = pow(rim, 2.0);
+          waterColor += vec3(0.3, 0.6, 1.0) * rim * 0.5;
+          
+          // Caustic-like pattern
+          float caustic = sin(vPosition.x * 10.0 + time * 2.0) * 
+                         sin(vPosition.y * 8.0 + time * 1.5) * 0.1 + 0.9;
+          waterColor *= caustic;
+          
+          // Mouse interaction highlighting
           vec2 mousePos = mouse * 2.0 - 1.0;
           float mouseDistance = length(vPosition.xy - mousePos);
-          float mouseColorEffect = smoothstep(8.0, 0.0, mouseDistance);
+          float mouseGlow = smoothstep(3.0, 0.0, mouseDistance) * 0.3;
+          waterColor += vec3(0.5, 0.8, 1.0) * mouseGlow;
           
-          // Smooth color transitions for liquid drops with mouse interaction
-          vec3 color = mix(colorA, colorB, smoothstep(0.0, 1.0, colorMix1 + mouseColorEffect * 0.3));
-          color = mix(color, colorC, smoothstep(0.0, 1.0, colorMix2 * colorMix3 + mouseColorEffect * 0.2));
+          // Final alpha with water-like transparency
+          float alpha = opacity * (0.4 + fresnel * 0.6);
+          alpha *= smoothstep(0.0, 0.2, length(vUv - 0.5));
           
-          // Enhanced fresnel for glass-like appearance with mouse highlighting
-          vec3 viewDirection = normalize(cameraPosition - vPosition);
-          float fresnel = pow(1.0 - dot(normalize(vNormal), viewDirection), 3.0);
-          color += vec3(0.2, 0.4, 0.8) * fresnel * (0.5 + mouseColorEffect * 0.3);
-          
-          // Professional lighting effect with mouse responsiveness
-          float brightness = 0.8 + vDisplacement * 0.3 + mouseColorEffect * 0.2;
-          color *= brightness;
-          
-          // Sophisticated alpha with edge enhancement and mouse interaction
-          float alpha = opacity * (0.6 + fresnel * 0.4 + mouseColorEffect * 0.1);
-          alpha *= smoothstep(0.0, 1.0, 1.0 - length(vUv - 0.5) * 2.0);
-          
-          gl_FragColor = vec4(color, alpha);
+          gl_FragColor = vec4(waterColor, alpha);
         }
       `,
       transparent: true,
@@ -230,67 +157,102 @@ const LiquidThreeBackground = () => {
       depthWrite: false,
     });
 
-    // Create professional liquid drops with varying sizes
-    const createLiquidDrop = (scale, position, opacity = 1.0) => {
+    // Create realistic water drops with varying sizes
+    const createWaterDrop = (scale, position, opacity = 1.0) => {
       const geometry = new THREE.SphereGeometry(scale, 32, 32);
-      const material = liquidMaterial.clone();
-      material.uniforms.opacity.value = opacity;
-      material.uniforms.amplitude.value = 1.2 * (scale / 3.0); // Scale amplitude with size
+      const material = waterDropMaterial.clone();
+      material.uniforms.opacity.value = opacity * 0.8;
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.copy(position);
       return mesh;
     };
 
-    // Create elegant liquid drop arrangement covering the whole screen
-    const drops = [
-      // Large background drops
-      createLiquidDrop(4.5, new THREE.Vector3(0, 0, -8), 0.3),
-      createLiquidDrop(4.0, new THREE.Vector3(-15, 8, -12), 0.25),
-      createLiquidDrop(4.2, new THREE.Vector3(12, -6, -10), 0.28),
-      createLiquidDrop(3.8, new THREE.Vector3(-8, -10, -15), 0.22),
-      createLiquidDrop(4.1, new THREE.Vector3(18, 5, -14), 0.26),
+    // Create falling water drops with physics from realistic ceiling positions
+    const createFallingWaterDrop = (
+      scale,
+      startX,
+      startY,
+      fallSpeed = 1.0,
+      opacity = 1.0
+    ) => {
+      const geometry = new THREE.SphereGeometry(scale, 16, 16);
+      const material = waterDropMaterial.clone();
+      material.uniforms.opacity.value = opacity * 0.8;
+      const mesh = new THREE.Mesh(geometry, material);
 
-      // Medium central drops
-      createLiquidDrop(3.2, new THREE.Vector3(-5, 3, -5), 0.4),
-      createLiquidDrop(3.0, new THREE.Vector3(8, -2, -6), 0.38),
-      createLiquidDrop(2.8, new THREE.Vector3(-12, 0, -8), 0.35),
-      createLiquidDrop(3.1, new THREE.Vector3(5, 8, -7), 0.37),
-      createLiquidDrop(2.9, new THREE.Vector3(-2, -7, -9), 0.36),
+      // Set initial position at realistic ceiling/roof height
+      mesh.position.set(startX, startY, Math.random() * -5 - 2);
 
-      // Screen edge drops for full coverage
-      createLiquidDrop(3.5, new THREE.Vector3(-20, 12, -18), 0.2),
-      createLiquidDrop(3.3, new THREE.Vector3(22, -8, -16), 0.22),
-      createLiquidDrop(3.7, new THREE.Vector3(-18, -12, -20), 0.18),
-      createLiquidDrop(3.4, new THREE.Vector3(20, 10, -17), 0.21),
+      // Add custom properties for realistic water drop physics
+      mesh.userData = {
+        fallSpeed: fallSpeed,
+        initialY: startY,
+        resetY: startY + 5, // Smaller reset range for realism
+        swayAmplitude: Math.random() * 0.3 + 0.1, // Reduced sway for realism
+        swaySpeed: Math.random() * 0.3 + 0.2,
+        spawnPoint: { x: startX, y: startY }, // Remember original spawn point
+        gravity: 0.98, // Add gravity acceleration
+      };
 
-      // Corner drops
-      createLiquidDrop(2.5, new THREE.Vector3(-25, 15, -25), 0.15),
-      createLiquidDrop(2.7, new THREE.Vector3(25, -15, -22), 0.17),
-      createLiquidDrop(2.4, new THREE.Vector3(-22, -18, -28), 0.14),
-      createLiquidDrop(2.6, new THREE.Vector3(24, 18, -24), 0.16),
+      return mesh;
+    };
 
-      // Additional depth layers
-      createLiquidDrop(2.2, new THREE.Vector3(-10, 6, -12), 0.32),
-      createLiquidDrop(2.4, new THREE.Vector3(6, -4, -11), 0.34),
-      createLiquidDrop(2.1, new THREE.Vector3(-6, -8, -13), 0.3),
-      createLiquidDrop(2.3, new THREE.Vector3(11, 4, -10), 0.33),
+    // Create array of falling drops from realistic ceiling points
+    const fallingDrops = [];
 
-      // Foreground accent drops
-      createLiquidDrop(1.8, new THREE.Vector3(-3, 5, -3), 0.5),
-      createLiquidDrop(1.9, new THREE.Vector3(4, -3, -2), 0.52),
-      createLiquidDrop(1.7, new THREE.Vector3(-7, -1, -4), 0.48),
-      createLiquidDrop(1.6, new THREE.Vector3(2, 7, -3), 0.46),
-
-      // Small ambient drops
-      createLiquidDrop(1.2, new THREE.Vector3(-15, 4, -18), 0.25),
-      createLiquidDrop(1.4, new THREE.Vector3(14, -9, -19), 0.27),
-      createLiquidDrop(1.3, new THREE.Vector3(-9, -15, -21), 0.23),
-      createLiquidDrop(1.1, new THREE.Vector3(16, 12, -20), 0.24),
-      createLiquidDrop(1.5, new THREE.Vector3(-13, 9, -16), 0.26),
-      createLiquidDrop(1.0, new THREE.Vector3(10, -12, -23), 0.22),
+    // Define realistic ceiling/roof spawn points where water would naturally drip
+    const ceilingDripPoints = [
+      { x: -15, y: 25 }, // Left side ceiling edge
+      { x: -8, y: 28 }, // Left ceiling corner
+      { x: 0, y: 30 }, // Center ceiling highest point
+      { x: 8, y: 28 }, // Right ceiling corner
+      { x: 15, y: 25 }, // Right side ceiling edge
+      { x: -22, y: 22 }, // Far left overhang
+      { x: 22, y: 22 }, // Far right overhang
+      { x: -5, y: 27 }, // Left center ceiling
+      { x: 5, y: 27 }, // Right center ceiling
+      { x: -12, y: 26 }, // Left intermediate point
+      { x: 12, y: 26 }, // Right intermediate point
+      { x: -18, y: 24 }, // Left edge
+      { x: 18, y: 24 }, // Right edge
+      { x: -3, y: 29 }, // Near center left
+      { x: 3, y: 29 }, // Near center right
     ];
 
-    drops.forEach((drop) => scene.add(drop));
+    // Create drops from these realistic points
+    ceilingDripPoints.forEach((point, index) => {
+      const drop = createFallingWaterDrop(
+        Math.random() * 0.2 + 0.08, // Smaller, more realistic drop sizes
+        point.x + (Math.random() - 0.5) * 2, // Small random offset from exact point
+        point.y,
+        Math.random() * 0.3 + 0.6, // Realistic fall speed
+        Math.random() * 0.5 + 0.5 // Good visibility
+      );
+      fallingDrops.push(drop);
+      scene.add(drop);
+    });
+
+    // Create static water drops for background depth
+    const staticDrops = [
+      // Large background drops for ambiance
+      createWaterDrop(4.5, new THREE.Vector3(0, 0, -15), 0.3),
+      createWaterDrop(4.0, new THREE.Vector3(-20, 5, -18), 0.25),
+      createWaterDrop(4.2, new THREE.Vector3(18, -3, -16), 0.28),
+      createWaterDrop(3.8, new THREE.Vector3(-12, -8, -20), 0.22),
+
+      // Medium background drops
+      createWaterDrop(3.2, new THREE.Vector3(-8, 6, -12), 0.35),
+      createWaterDrop(3.0, new THREE.Vector3(12, -5, -14), 0.32),
+      createWaterDrop(2.8, new THREE.Vector3(-15, 0, -17), 0.3),
+
+      // Small ambient drops
+      createWaterDrop(2.0, new THREE.Vector3(-25, 10, -22), 0.2),
+      createWaterDrop(1.8, new THREE.Vector3(22, -10, -19), 0.22),
+      createWaterDrop(1.5, new THREE.Vector3(-18, -15, -25), 0.18),
+      createWaterDrop(1.7, new THREE.Vector3(25, 8, -21), 0.19),
+    ];
+
+    staticDrops.forEach((drop) => scene.add(drop));
 
     // Create subtle professional particles covering full screen
     const createFloatingParticles = () => {
@@ -308,20 +270,20 @@ const LiquidThreeBackground = () => {
         positions[i3 + 1] = (Math.random() - 0.5) * 120;
         positions[i3 + 2] = (Math.random() - 0.5) * 100;
 
-        // Professional color palette
+        // Water-like color palette
         const colorChoice = Math.random();
         if (colorChoice < 0.4) {
-          colors[i3] = 0.12; // Deep Blue
-          colors[i3 + 1] = 0.25;
-          colors[i3 + 2] = 0.69;
+          colors[i3] = 0.12; // Deep Water Blue
+          colors[i3 + 1] = 0.35;
+          colors[i3 + 2] = 0.54;
         } else if (colorChoice < 0.7) {
-          colors[i3] = 0.49; // Rich Purple
-          colors[i3 + 1] = 0.23;
-          colors[i3 + 2] = 0.93;
+          colors[i3] = 0.23; // Bright Blue
+          colors[i3 + 1] = 0.51;
+          colors[i3 + 2] = 0.96;
         } else {
-          colors[i3] = 0.03; // Professional Cyan
-          colors[i3 + 1] = 0.57;
-          colors[i3 + 2] = 0.7;
+          colors[i3] = 0.58; // Light Blue
+          colors[i3 + 1] = 0.77;
+          colors[i3 + 2] = 0.99;
         }
 
         sizes[i] = Math.random() * 1.5 + 0.3;
@@ -392,6 +354,8 @@ const LiquidThreeBackground = () => {
     const clock = new THREE.Clock();
     const targetMouse = new THREE.Vector2(0.5, 0.5);
     const smoothMouse = new THREE.Vector2(0.5, 0.5);
+    let lastDropSpawn = 0;
+    const dropSpawnInterval = 3; // Spawn new drop every 3 seconds for realism
 
     // Mouse interaction with smooth movement
     const handleMouseMove = (event) => {
@@ -414,52 +378,85 @@ const LiquidThreeBackground = () => {
       const mouseInfluenceX = (smoothMouse.x - 0.5) * 10;
       const mouseInfluenceY = (smoothMouse.y - 0.5) * 10;
 
-      // Update drop materials and positions
-      drops.forEach((drop, index) => {
+      // Spawn new falling drops periodically from realistic ceiling points
+      if (
+        time - lastDropSpawn > dropSpawnInterval &&
+        fallingDrops.length < 25
+      ) {
+        // Choose a random ceiling drip point for realism
+        const dripPoint =
+          ceilingDripPoints[
+            Math.floor(Math.random() * ceilingDripPoints.length)
+          ];
+
+        const newDrop = createFallingWaterDrop(
+          Math.random() * 0.15 + 0.08, // Small realistic drop size
+          dripPoint.x + (Math.random() - 0.5) * 1.5, // Small variation from drip point
+          dripPoint.y + Math.random() * 2, // Slight height variation
+          Math.random() * 0.3 + 0.6, // Realistic fall speed
+          Math.random() * 0.4 + 0.6 // Good visibility
+        );
+        fallingDrops.push(newDrop);
+        scene.add(newDrop);
+        lastDropSpawn = time;
+      }
+
+      // Update falling drops animation with realistic physics
+      fallingDrops.forEach((drop, index) => {
         drop.material.uniforms.time.value = time;
         drop.material.uniforms.mouse.value.copy(smoothMouse);
 
-        // Mouse-responsive movement with magnetic effect
+        // Realistic falling animation with gravity acceleration
+        drop.userData.fallSpeed *= drop.userData.gravity;
+        drop.position.y -= drop.userData.fallSpeed * 0.3;
+
+        // Natural swaying motion like real water drops
+        drop.position.x +=
+          Math.sin(time * drop.userData.swaySpeed + index) *
+          drop.userData.swayAmplitude *
+          0.01;
+
+        // Reset to original spawn point when drop falls below screen
+        if (drop.position.y < -25) {
+          // Return to the original ceiling drip point
+          drop.position.x =
+            drop.userData.spawnPoint.x + (Math.random() - 0.5) * 1.5;
+          drop.position.y = drop.userData.spawnPoint.y + Math.random() * 2;
+          drop.position.z = Math.random() * -5 - 2;
+          drop.userData.fallSpeed = Math.random() * 0.3 + 0.6; // Reset fall speed
+        }
+
+        // Mouse interaction - drops get slightly influenced by air currents
         const dropX = drop.position.x;
         const dropY = drop.position.y;
         const distanceFromMouse = Math.sqrt(
           Math.pow(dropX - mouseInfluenceX, 2) +
             Math.pow(dropY - mouseInfluenceY, 2)
         );
-        const mouseEffect = Math.max(0, 1 - distanceFromMouse / 20);
+        const mouseEffect = Math.max(0, 1 - distanceFromMouse / 12) * 0.2;
 
-        // Magnetic attraction to mouse
-        const attractionForce = mouseEffect * 0.02;
-        const directionToMouse = {
-          x: (mouseInfluenceX - dropX) * attractionForce,
-          y: (mouseInfluenceY - dropY) * attractionForce,
-        };
+        // Subtle air current effect from mouse movement
+        if (mouseEffect > 0) {
+          const airCurrentForce = mouseEffect * 0.005;
+          drop.position.x += (mouseInfluenceX - dropX) * airCurrentForce;
+        }
 
-        // Apply mouse influence to drop positions with smooth animation
-        drop.position.x +=
-          Math.sin(mouseInfluenceX * 0.1 + index) * mouseEffect * 0.3 +
-          directionToMouse.x;
-        drop.position.y +=
-          Math.cos(mouseInfluenceY * 0.1 + index) * mouseEffect * 0.2 +
-          directionToMouse.y;
+        // Minimal rotation for natural effect
+        drop.rotation.z += 0.01;
+      });
 
-        // Enhanced rotation with mouse influence
-        drop.rotation.x +=
-          0.001 * (index % 2 === 0 ? 1 : -1) + mouseEffect * 0.003;
-        drop.rotation.y +=
-          0.0015 * (index % 3 === 0 ? 1 : -1) + mouseEffect * 0.004;
-        drop.rotation.z +=
-          0.0005 * (index % 4 === 0 ? 1 : -1) + mouseEffect * 0.002;
+      // Update static background drops
+      staticDrops.forEach((drop, index) => {
+        drop.material.uniforms.time.value = time;
+        drop.material.uniforms.mouse.value.copy(smoothMouse);
 
-        // Professional floating motion with enhanced mouse influence
-        drop.position.y +=
-          Math.sin(time * 0.3 + index * 1.5) * 0.008 + mouseEffect * 0.015;
-        drop.position.x +=
-          Math.cos(time * 0.2 + index * 1.2) * 0.005 + mouseEffect * 0.012;
+        // Gentle floating motion for background drops
+        drop.position.y += Math.sin(time * 0.3 + index * 1.5) * 0.005;
+        drop.position.x += Math.cos(time * 0.2 + index * 1.2) * 0.003;
 
-        // Scale effect based on mouse proximity
-        const baseScale = 1.0 + mouseEffect * 0.2;
-        drop.scale.setScalar(baseScale);
+        // Subtle rotation
+        drop.rotation.x += 0.001 * (index % 2 === 0 ? 1 : -1);
+        drop.rotation.y += 0.0015 * (index % 3 === 0 ? 1 : -1);
       });
 
       // Update particle system with mouse interaction
@@ -484,10 +481,10 @@ const LiquidThreeBackground = () => {
       }
       floatingParticles.geometry.attributes.position.needsUpdate = true;
 
-      // Mouse-responsive camera movement
-      camera.position.x = Math.sin(time * 0.05) * 2 + mouseInfluenceX * 0.3;
-      camera.position.y = Math.cos(time * 0.04) * 1.5 + mouseInfluenceY * 0.2;
-      camera.lookAt(mouseInfluenceX * 0.1, mouseInfluenceY * 0.1, 0);
+      // Subtle camera movement that doesn't interfere with falling drops
+      camera.position.x = Math.sin(time * 0.02) * 1 + mouseInfluenceX * 0.1;
+      camera.position.y = Math.cos(time * 0.015) * 0.5 + mouseInfluenceY * 0.05;
+      camera.lookAt(mouseInfluenceX * 0.05, mouseInfluenceY * 0.05, 0);
 
       renderer.render(scene, camera);
     };
@@ -502,8 +499,15 @@ const LiquidThreeBackground = () => {
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
 
-      // Update material resolution
-      drops.forEach((drop) => {
+      // Update material resolution for all drops
+      fallingDrops.forEach((drop) => {
+        drop.material.uniforms.resolution.value.set(
+          window.innerWidth,
+          window.innerHeight
+        );
+      });
+
+      staticDrops.forEach((drop) => {
         drop.material.uniforms.resolution.value.set(
           window.innerWidth,
           window.innerHeight
