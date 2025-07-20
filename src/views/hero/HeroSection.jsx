@@ -6,7 +6,7 @@ import {
   FaDownload,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
-import ThreeBackground from "../../components/ThreeBackground";
+import LiquidThreeBackground from "../../components/LiquidThreeBackground";
 import FloatingElements from "../../components/FloatingElements";
 import TypingEffect from "../../components/TypingEffect";
 import PerformanceOptimizer from "../../components/PerformanceOptimizer";
@@ -51,26 +51,18 @@ const iconVariants = {
 export default function Hero() {
   return (
     <PerformanceOptimizer>
-      <section className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 relative overflow-hidden">
-        {/* Three.js Background */}
-        <ThreeBackground />
+      <section className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 relative overflow-hidden">
+        {/* Professional Liquid Background */}
+        <LiquidThreeBackground />
 
-        {/* Enhanced Background Elements */}
-        <div className="absolute inset-0 opacity-20 z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/30 to-purple-950/30"></div>
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-900/10 to-transparent"></div>
-          <div
-            className="absolute inset-0 opacity-50"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          ></div>
+        {/* Subtle Professional Overlay */}
+        <div className="absolute inset-0 opacity-5 z-10">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-950/10 to-purple-950/10"></div>
         </div>
 
-        {/* Professional Floating Elements */}
-        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full mix-blend-multiply filter blur-3xl animate-pulse z-10"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000 z-10"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gradient-to-br from-cyan-500/5 to-transparent rounded-full mix-blend-multiply filter blur-2xl animate-pulse delay-500 z-10"></div>
+        {/* Minimal Professional Elements */}
+        <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-blue-500/3 to-transparent rounded-full mix-blend-multiply filter blur-2xl z-10"></div>
+        <div className="absolute bottom-20 right-20 w-48 h-48 bg-gradient-to-br from-purple-500/3 to-transparent rounded-full mix-blend-multiply filter blur-2xl z-10"></div>
 
         <div className="w-[90%] mx-auto px-6 py-16 relative z-20">
           <motion.div
