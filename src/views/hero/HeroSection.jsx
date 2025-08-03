@@ -6,7 +6,9 @@ import {
   FaDownload,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
-import LiquidThreeBackground from "../../components/LiquidThreeBackground";
+import { useState, useRef } from "react";
+import MetallicSpheresBackground from "../../components/MetallicSpheresBackground";
+import MetallicSpheresControls from "../../components/MetallicSpheresControls";
 import FloatingElements from "../../components/FloatingElements";
 import TypingEffect from "../../components/TypingEffect";
 import PerformanceOptimizer from "../../components/PerformanceOptimizer";
@@ -49,11 +51,51 @@ const iconVariants = {
 };
 
 export default function Hero() {
+  const [sphereSettings, setSphereSettings] = useState({
+    metallic: 0.9,
+    roughness: 0.1,
+    lightIntensity: 1.2,
+    sphereCount: 150,
+  });
+
+  const backgroundRef = useRef();
+
+  const handleMetallicChange = (settings) => {
+    setSphereSettings((prev) => ({ ...prev, ...settings }));
+    if (backgroundRef.current?.updateMaterials) {
+      backgroundRef.current.updateMaterials(settings);
+    }
+  };
+
+  const handleLightingChange = (intensity) => {
+    setSphereSettings((prev) => ({ ...prev, lightIntensity: intensity }));
+    if (backgroundRef.current?.updateLighting) {
+      backgroundRef.current.updateLighting(intensity);
+    }
+  };
+
+  const handleDensityChange = (count) => {
+    setSphereSettings((prev) => ({ ...prev, sphereCount: count }));
+    if (backgroundRef.current?.updateDensity) {
+      backgroundRef.current.updateDensity(count);
+    }
+  };
+
   return (
     <PerformanceOptimizer>
       <section className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 relative overflow-hidden">
-        {/* Professional Liquid Background */}
-        <LiquidThreeBackground />
+        {/* Professional Metallic Spheres Background */}
+        <MetallicSpheresBackground
+          ref={backgroundRef}
+          settings={sphereSettings}
+        />
+
+        {/* Metallic Spheres Controls */}
+        <MetallicSpheresControls
+          onMetallicChange={handleMetallicChange}
+          onLightingChange={handleLightingChange}
+          onDensityChange={handleDensityChange}
+        />
 
         {/* Subtle Professional Overlay */}
         <div className="absolute inset-0 opacity-5 z-10">
@@ -104,9 +146,11 @@ export default function Hero() {
                 className="text-lg lg:text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed"
                 variants={itemVariants}
               >
-                I craft beautiful, responsive, and user-friendly web experiences
-                using modern technologies like React, Next.js, and Tailwind CSS.
-                Let's bring your ideas to life.
+                Skilled React Developer with 2 years of experience specializing
+                in building responsive and user-friendly web applications.
+                Proficient in React.js, JavaScript, and modern front-end
+                technologies. Passionate about delivering high-quality,
+                efficient code while staying up-to-date with industry trends.
               </motion.p>
 
               {/* CTA Buttons */}
@@ -159,7 +203,7 @@ export default function Hero() {
                     },
                     {
                       Icon: FaLinkedin,
-                      href: "https://www.linkedin.com/in/rijan-thapa-136a84315/",
+                      href: "https://linkedin.com/in/rijan-thapa-136a84315",
                       label: "LinkedIn",
                     },
                     {
@@ -264,7 +308,7 @@ export default function Hero() {
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
                     <span className="text-xs font-medium text-cyan-200">
-                      3+ Years Experience
+                      2+ Years Experience
                     </span>
                   </div>
                 </motion.div>
