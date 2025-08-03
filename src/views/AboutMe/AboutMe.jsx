@@ -132,23 +132,26 @@ export default function About() {
                 <p className="text-lg">
                   I'm a passionate Frontend developer with{" "}
                   <span className="font-semibold text-blue-600">
-                    1 year of experience
+                    2 years of experience
                   </span>{" "}
-                  in building modern web applications. I specialize in creating
-                  responsive, accessible, and performant user interfaces using
-                  React, Next.js, and other cutting-edge technologies.
+                  at Next Step, specializing in building responsive and
+                  user-friendly web applications. I'm proficient in React.js,
+                  JavaScript, and modern front-end technologies, passionate
+                  about delivering high-quality, efficient code while staying
+                  up-to-date with industry trends.
                 </p>
                 <p className="text-lg">
-                  My journey in web development started with a fascination for
-                  creating interactive user experiences. Over the years, I've
-                  honed my skills in JavaScript, React, and related
-                  technologies, always staying up-to-date with the latest trends
-                  and best practices.
+                  My expertise spans across Next.js, TypeScript, CSS, Ant
+                  Design, React Query, Node.js, and state management solutions
+                  like Zustand and Redux Saga. I have contributed to the
+                  development of multiple school management systems, focusing on
+                  optimizing performance and writing clean, maintainable code.
                 </p>
                 <p className="text-lg">
-                  When I'm not coding, you can find me contributing to
-                  open-source projects, writing technical blog posts, or
-                  exploring new web technologies.
+                  I'm ready to contribute my expertise in front-end development
+                  to new and challenging projects, always excited to work with
+                  innovative technologies and deliver exceptional user
+                  experiences.
                 </p>
               </div>
             </div>
@@ -182,23 +185,26 @@ export default function About() {
                     <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-lg border border-blue-100 hover:shadow-xl transition-shadow">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-bold text-xl text-gray-800">
-                          Frontend Intern
+                          Frontend Developer
                         </h4>
-                        <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                          3 months
+                        <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium">
+                          Current
                         </span>
                       </div>
                       <p className="text-blue-600 font-semibold mb-2">
-                        Axios Software
+                        Next Step
                       </p>
                       <p className="text-gray-600 text-sm mb-3">
-                        Dec 24, 2023 - Mar 4, 2024
+                        2024/06 – present • Banepa, Nepal
                       </p>
                       <p className="text-gray-700 leading-relaxed">
-                        Gained hands-on experience with React.js and modern
-                        frontend development practices. Contributed to
-                        real-world projects and collaborated with senior
-                        developers.
+                        Contributed to the development of a school management
+                        system using Next.js, TypeScript, Ant Design, and React
+                        Query, focusing on optimizing performance and writing
+                        clean, maintainable code, resulting in a 20% increase in
+                        user engagement. Implemented Redux Saga for state
+                        management to increase code readability and optimize the
+                        project.
                       </p>
                     </div>
                   </motion.div>
@@ -214,20 +220,51 @@ export default function About() {
                         <h4 className="font-bold text-xl text-gray-800">
                           Frontend Developer
                         </h4>
-                        <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium">
-                          Current
+                        <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+                          6 months
                         </span>
                       </div>
                       <p className="text-purple-600 font-semibold mb-2">
-                        NEXT Step
+                        Next Step
                       </p>
                       <p className="text-gray-600 text-sm mb-3">
-                        Mar 10, 2024 - Present
+                        2023/12 – 2024/06 • Banepa, Nepal
                       </p>
                       <p className="text-gray-700 leading-relaxed">
-                        Developing responsive web applications using React and
-                        Next.js. Implementing state management solutions and
-                        optimizing performance for enhanced user experiences.
+                        Contributed to the development of a school management
+                        system using React, Bootstrap, Material UI, Zustand for
+                        state management, focusing on optimizing and
+                        maintainable code.
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {/* Timeline Item 3 */}
+                  <motion.div
+                    className="relative pl-16"
+                    variants={timelineItem}
+                  >
+                    <div className="absolute left-6 top-6 w-3 h-3 rounded-full bg-green-600 border-4 border-green-200 transform -translate-x-1/2 shadow-lg"></div>
+                    <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl shadow-lg border border-green-100 hover:shadow-xl transition-shadow">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-bold text-xl text-gray-800">
+                          Frontend Intern
+                        </h4>
+                        <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-medium">
+                          4 months
+                        </span>
+                      </div>
+                      <p className="text-green-600 font-semibold mb-2">
+                        Axios Software
+                      </p>
+                      <p className="text-gray-600 text-sm mb-3">
+                        2023/10 – 2024/01
+                      </p>
+                      <p className="text-gray-700 leading-relaxed">
+                        During my internship at Axios Software, I developed
+                        responsive web designs and integrated APIs to enhance
+                        application functionality. My work was recognized, and I
+                        was awarded a certificate for my contributions.
                       </p>
                     </div>
                   </motion.div>
