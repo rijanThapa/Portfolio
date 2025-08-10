@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import Navbar from "./components/Navbar";
 import LandaningPage from "./views/LandaingPage/LandaningPage";
 import AOS from "aos";
 import "aos/dist/aos.css";
+
 export default function App() {
   useEffect(() => {
     AOS.init({
@@ -13,6 +15,7 @@ export default function App() {
 
   return (
     <>
+      <Navbar />
       <LandaningPage />
     </>
   );
