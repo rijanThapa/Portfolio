@@ -289,7 +289,7 @@ export default function About() {
               color: "from-blue-500 to-blue-600",
             },
             {
-              number: "10+",
+              number: "11+",
               label: "Projects Completed",
               color: "from-purple-500 to-purple-600",
             },
